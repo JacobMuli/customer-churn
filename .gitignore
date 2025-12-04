@@ -1,0 +1,50 @@
+# ----------------------------
+# Ignore large datasets
+# ----------------------------
+*.csv
+*.tsv
+*.xlsx
+*.parquet
+*.zip
+
+# Allow sample data if needed
+!data/sample_input.json
+
+# ----------------------------
+# Ignore notebook checkpoints
+# ----------------------------
+.ipynb_checkpoints/
+
+# ----------------------------
+# Ignore Python cache & build files
+# ----------------------------
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pdb
+*.egg-info/
+*.egg
+build/
+dist/
+
+# ----------------------------
+# Ignore virtual environments
+# ----------------------------
+env/
+venv/
+.venv/
+
+# ----------------------------
+# Ignore model training outputs except .pkl
+# ----------------------------
+*.h5
+*.joblib
+!model/*.pkl     # Allow model artifacts inside /model
+!model/*.joblib  # Allow joblib artifacts if needed
+
+# ----------------------------
+# Streamlit debug logs
+# ----------------------------
+.streamlit/
+logs/
