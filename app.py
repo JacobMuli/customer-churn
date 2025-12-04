@@ -36,7 +36,7 @@ with col2:
     st.markdown("### 📊 EDA Overview")
     st.write("Explore dataset summary, distribution, and churn balance.")
     if st.button("Open EDA Overview"):
-        st.switch_page("pages/1_EDA_Overview.py")
+        st.switch_page("pages/1_EDA_Dashboard.py")
 
 with col3:
     st.markdown("### 📈 Numeric Feature Analysis")
