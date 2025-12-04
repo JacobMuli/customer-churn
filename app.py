@@ -3,23 +3,32 @@ import pandas as pd
 import numpy as np
 import joblib
 
-# ----------------------------
-# Load Artifacts
-# ----------------------------
+# -------------------------------------------------
+# PAGE CONFIG — MUST BE FIRST STREAMLIT COMMAND
+# -------------------------------------------------
+st.set_page_config(
+    page_title="Customer Churn Prediction",
+    page_icon="🔮",
+    layout="centered",
+)
+
+# -------------------------------------------------
+# LOAD MODEL ARTIFACTS
+# -------------------------------------------------
 model = joblib.load("model/rf_model.pkl")
 scaler = joblib.load("model/scaler.pkl")
 label_encoders = joblib.load("model/label_encoders.pkl")
 feature_names = joblib.load("model/feature_names.pkl")
 
-# Streamlit UI
-st.set_page_config(page_title="Customer Churn Prediction", page_icon="🔮")
-
+# -------------------------------------------------
+# MAIN PAGE — PREDICTION UI
+# -------------------------------------------------
 st.title("🔮 Customer Churn Prediction App")
-st.write("Fill the form below to predict whether a customer is likely to churn.")
+st.write("Use the form below to predict whether a customer is likely to churn.")
 
-# ----------------------------
-# Streamlit Form Inputs
-# ----------------------------
+# -------------------------------------------------
+# INPUT FORM
+# -------------------------------------------------
 with st.form("prediction_form"):
     col1, col2 = st.columns(2)
 
@@ -40,9 +49,9 @@ with st.form("prediction_form"):
 
     submitted = st.form_submit_button("Predict Churn")
 
-# ----------------------------
-# Preprocessing
-# ----------------------------
+# -------------------------------------------------
+# PREPROCESSING FUNCTION
+# -------------------------------------------------
 def preprocess_input():
     gender_val = 1 if gender == "Female" else 0
 
@@ -58,8 +67,7 @@ def preprocess_input():
     support_intensity = support_calls / max(usage, 1)
     recency_tenure_ratio = last_interaction / max(tenure, 1)
 
-    # Construct feature dictionary
-    features = {
+    data = {
         "Age": age,
         "Gender": gender_val,
         "Tenure": tenure,
@@ -79,31 +87,28 @@ def preprocess_input():
         "Recency_Tenure_Ratio": recency_tenure_ratio,
     }
 
-    df = pd.DataFrame([features])
+    df = pd.DataFrame([data])
 
     # Apply label encoders
     for col, le in label_encoders.items():
         if col in df.columns:
             df[col] = le.transform(df[col].astype(str))
 
-    # Add any missing training columns
+    # Add missing columns
     for col in feature_names:
         if col not in df.columns:
             df[col] = 0
 
-    # Reorder to match training
-    df = df[feature_names]
+    df = df[feature_names]  # reorder
 
-    # Scale for model
     scaled = scaler.transform(df)
     return scaled
 
-# ----------------------------
-# Prediction Execution
-# ----------------------------
+# -------------------------------------------------
+# PREDICTION
+# -------------------------------------------------
 if submitted:
     X_processed = preprocess_input()
-
     proba = model.predict_proba(X_processed)[0][1]
     pred = int(proba > 0.5)
 
